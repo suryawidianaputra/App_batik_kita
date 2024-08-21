@@ -6,15 +6,18 @@ import {
   TouchableOpacity,
   Alert,
 } from 'react-native';
-import {useState} from 'react';
+import {useState, useEffect} from 'react';
 import {styles} from '../styles/login';
 import {trimmed, emailValidation} from '../libs/validasiText';
 import {Set, isLogin} from '../libs/authentication';
 import BackButton from '../components/backButton';
 import axios from 'axios';
+import {api_url} from '../services/api_url';
 
 const RegisterScreen = ({navigation}) => {
-  if (!isLogin) return navigation.goBack();
+  useEffect(() => {
+    if (isLogin) return navigation.navigate('login');
+  }, []);
   const [userName, setUserName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -41,16 +44,16 @@ const RegisterScreen = ({navigation}) => {
         [{text: 'OK'}],
       );
     else {
-      const updata = await axios.post('http://10.0.2.2:3550/api/users?key=a', {
+      const updata = await axios.post(`http://10.0.2.2:3550/api/users?key=a`, {
         username: userName,
         email: email,
         password: password,
       });
       // console.log(updata);
       if (updata.data) {
-        Set('isLogin', 'true');
-        Set('userName', userName);
-        Set('email', email);
+        await Set('isLogin', 'true');
+        await Set('userName', userName);
+        await Set('email', email);
         navigation.navigate('home');
       } else return Alert.alert('Error', 'Tolong login ulang', [{text: 'Ok'}]);
     }

@@ -1,18 +1,38 @@
 import {Text, View, TextInput, Image, TouchableOpacity} from 'react-native';
-import {useState} from 'react';
+import {useState, useEffect} from 'react';
 import {styles} from '../styles/login';
 import {Set, isLogin} from '../libs/authentication';
 import {cssVariable} from '../styles/cssVariable';
+import {api_url} from '../services/api_url';
 
 const LoginScreen = ({navigation}) => {
-  if (!isLogin) return navigation.goBack();
+  useEffect(() => {
+    if (isLogin) return navigation.navigate('login');
+    console.log(isLogin);
+  }, []);
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(true);
 
   async function handleLogin() {
-    //
+    if (!(trimmed(email) && trimmed(password)))
+      return Alert.alert('Error', 'Data tidak lengkap', [{text: 'Ok'}]);
+    if (!emailValidation(email))
+      Alert.alert('Error', 'Email tidak valid', [{text: 'Ok'}]);
+    else {
+      const updata = await axios.get(`${api_url}/api/users?key=a`, {
+        email: email,
+        password: password,
+      });
+      // console.log(updata);
+      if (updata.data) {
+        await Set('isLogin', 'true');
+        await Set('userName', userName);
+        await Set('email', email);
+        navigation.navigate('home');
+      } else return Alert.alert('Error', 'Tolong login ulang', [{text: 'Ok'}]);
+    }
   }
 
   return (

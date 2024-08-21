@@ -1,7 +1,7 @@
 import {View, TouchableOpacity} from 'react-native';
 import {cssVariable} from '../styles/cssVariable';
 
-export default function BackButton({nav}) {
+export default function BackButton({nav, color}) {
   return (
     <TouchableOpacity onPress={() => nav.goBack()}>
       <View
@@ -11,7 +11,7 @@ export default function BackButton({nav}) {
           marginLeft: 10,
           borderLeftWidth: 3,
           borderBottomWidth: 3,
-          borderColor: cssVariable.colors.orange,
+          borderColor: color ? '#fff' : cssVariable.colors.orange,
           transform: [{rotate: '45deg'}],
           zIndex: 9999,
           top: 0,

@@ -9,6 +9,7 @@ import {
 } from 'react-native';
 import {useState, useEffect} from 'react';
 import {curency} from '../libs/currency';
+import {api_url} from '../services/api_url';
 import axios from 'axios';
 
 // screens
@@ -23,12 +24,12 @@ const DetailScreens = ({navigation, route}) => {
   const [addComment, setAddComment] = useState('');
 
   const getData = async () => {
-    const data = await axios.get('http://10.0.2.2:3550/api/comment/1?key=a');
+    const data = await axios.get(`${api_url}/api/comment/1?key=a`);
     setComment(data.data.data);
   };
 
   const handleCreateComment = async () => {
-    const data = await axios.post('http://10.0.2.2:3550/api/comment?key=a', {});
+    const data = await axios.post(`${api_url}/api/comment?key=a`, {});
   };
 
   useEffect(() => {
