@@ -31,7 +31,6 @@ const Navbar = ({nav}) => {
         <Image
           style={styles.image}
           source={require('../assets/icons/account.png')}
-          onPress={() => nav.navigate('account')}
         />
       </TouchableOpacity>
     </View>

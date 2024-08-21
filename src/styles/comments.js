@@ -7,6 +7,8 @@ export const styles = StyleSheet.create({
     marginTop: 10,
     shadowColor: '#000',
     elevation: 1,
+    // borderWidth: 1,
+    // borderRadius: 5,
     padding: 10,
   },
   userIcon: {
@@ -26,6 +28,7 @@ export const styles = StyleSheet.create({
   comment: {
     fontSize: 15,
     marginTop: 5,
-    marginLeft: 15,
+    marginLeft: 35,
+    color: cssVariable.colors.black,
   },
 });

@@ -33,6 +33,18 @@ export const styles = StyleSheet.create({
   soldOut: {
     color: cssVariable.colors.dark,
   },
+  textInput: {
+    borderWidth: 2,
+    textAlignVertical: 'top',
+    width: '60%',
+    borderRadius: 10,
+    paddingLeft: 10,
+  },
+  inputButton: {
+    width: '30%',
+    borderRadius: 10,
+    backgroundColor: cssVariable.colors.orange,
+  },
   action: {
     width: '100%',
     backgroundColor: cssVariable.colors.orange,
@@ -40,8 +52,9 @@ export const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     height: 50,
-    position: 'absolute',
+    // position: 'absolute',
     bottom: 0,
+    zIndex: 9999,
   },
   keranjang: {
     height: 50,

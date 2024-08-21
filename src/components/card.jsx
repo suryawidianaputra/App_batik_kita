@@ -9,7 +9,7 @@ const Card = ({nav}) => {
   const [product, setProduct] = useState([]);
 
   async function getProduct() {
-    const data = await axios.get('http://10.0.2.2:3500/api/product?key=a');
+    const data = await axios.get('http://10.0.2.2:3550/api/product?key=a');
     setProduct(data.data.data);
   }
 
@@ -28,7 +28,7 @@ const Card = ({nav}) => {
             onPress={() => nav.navigate('detail', {data: el})}>
             <View style={styles.card}>
               <Image
-                source={{uri: `http://10.0.2.2:3500/${el.product_images}`}}
+                source={{uri: `http://10.0.2.2:3550/${el.product_images}`}}
                 height={50}
                 width={50}
                 style={styles.image}
@@ -42,6 +42,7 @@ const Card = ({nav}) => {
           </TouchableOpacity>
         ))}
       </View>
+      <View style={{height: 55}}></View>
     </>
   );
 };

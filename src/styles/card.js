@@ -47,5 +47,6 @@ export const styles = StyleSheet.create({
   soldout: {
     paddingHorizontal: 10,
     color: cssVariable.colors.black,
+    marginBottom: 5,
   },
 });
