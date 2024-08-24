@@ -1,10 +1,24 @@
-import {Text, View} from 'react-native';
-import {useState, useEffect} from 'react';
-import {isLogin} from '../libs/authentication';
+import {Text, View, Alert} from 'react-native';
+import {useEffect} from 'react';
+import {isLogin, Authentication, debug} from '../libs/authentication';
 import BackButton from '../components/backButton';
 
 const ProfileScreen = ({navigation}) => {
-  if (!isLogin) return navigation.navigate('login');
+  useEffect(() => {
+    const checkLoginStatus = async () => {
+      await Authentication();
+      if (!isLogin) {
+        Alert.alert(
+          'Not Logged In',
+          'You need to be logged in to view this page',
+          [{text: 'OK', onPress: () => navigation.navigate('home')}],
+        );
+      }
+    };
+
+    debug();
+    checkLoginStatus();
+  }, [navigation]);
 
   return (
     <>
@@ -12,7 +26,7 @@ const ProfileScreen = ({navigation}) => {
         <BackButton nav={navigation} />
       </View>
       <View>
-        <Text>Hallo Sss</Text>
+        <Text>Hello, User</Text>
       </View>
     </>
   );

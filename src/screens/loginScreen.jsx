@@ -1,37 +1,56 @@
-import {Text, View, TextInput, Image, TouchableOpacity} from 'react-native';
-import {useState, useEffect} from 'react';
+import {
+  Text,
+  View,
+  TextInput,
+  Image,
+  TouchableOpacity,
+  Alert,
+} from 'react-native';
+import {useState} from 'react';
 import {styles} from '../styles/login';
-import {Set, isLogin} from '../libs/authentication';
+import {Set, Get, isLogin, Authentication} from '../libs/authentication';
 import {cssVariable} from '../styles/cssVariable';
-import {api_url} from '../services/api_url';
+import {emailValidation, trimmed} from '../libs/validasiText';
+import axios from 'axios';
 
 const LoginScreen = ({navigation}) => {
-  useEffect(() => {
-    if (isLogin) return navigation.navigate('login');
-    console.log(isLogin);
-  }, []);
-
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(true);
 
   async function handleLogin() {
-    if (!(trimmed(email) && trimmed(password)))
+    if (!(trimmed(email) && trimmed(password))) {
       return Alert.alert('Error', 'Data tidak lengkap', [{text: 'Ok'}]);
-    if (!emailValidation(email))
-      Alert.alert('Error', 'Email tidak valid', [{text: 'Ok'}]);
-    else {
-      const updata = await axios.get(`${api_url}/api/users?key=a`, {
-        email: email,
-        password: password,
-      });
-      // console.log(updata);
-      if (updata.data) {
-        await Set('isLogin', 'true');
-        await Set('userName', userName);
-        await Set('email', email);
-        navigation.navigate('home');
-      } else return Alert.alert('Error', 'Tolong login ulang', [{text: 'Ok'}]);
+    }
+    if (!emailValidation(email)) {
+      return Alert.alert('Error', 'Email tidak valid', [{text: 'Ok'}]);
+    } else {
+      try {
+        const response = await axios.post(
+          `http://10.0.2.2:3550/api/users/login?key=a`,
+          {
+            email: email,
+            password: password,
+          },
+        );
+        if (response.data.data.username) {
+          await Set('isLogin', 'true');
+          await Set('userName', response.data.data.username);
+          await Set('email', response.data.data.email);
+          await Authentication(); // Mengupdate status otentikasi
+
+          if (isLogin) {
+            return navigation.navigate('account');
+          }
+        } else {
+          return Alert.alert('Error', 'Tolong login ulang', [{text: 'Ok'}]);
+        }
+      } catch (error) {
+        console.log('Login error:', error);
+        return Alert.alert('Error', 'Terjadi kesalahan, coba lagi', [
+          {text: 'Ok'},
+        ]);
+      }
     }
   }
 
@@ -50,7 +69,8 @@ const LoginScreen = ({navigation}) => {
               transform: [{rotate: '45deg'}],
               zIndex: 9999,
               top: 0,
-            }}></View>
+            }}
+          />
         </TouchableOpacity>
       </View>
       <View
@@ -93,7 +113,7 @@ const LoginScreen = ({navigation}) => {
               {!showPassword ? 'Sembunyikan Password' : 'Tampilkan Password'}
             </Text>
           </View>
-          <TouchableOpacity style={styles.button}>
+          <TouchableOpacity style={styles.button} onPress={handleLogin}>
             <View>
               <Text style={{color: '#fff', fontSize: 18}}>Login</Text>
             </View>
@@ -101,7 +121,7 @@ const LoginScreen = ({navigation}) => {
           <Text
             style={styles.createAccount}
             onPress={() => navigation.navigate('register')}>
-            Buat akuln
+            Buat akun
           </Text>
         </View>
       </View>
