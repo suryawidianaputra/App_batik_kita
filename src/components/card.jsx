@@ -4,6 +4,7 @@ import axios from 'axios';
 import {getResponse} from '../services/api';
 import {styles} from '../styles/card';
 import {curency} from '../libs/currency';
+import {debug, Set} from '../libs/authentication';
 
 const Card = ({nav}) => {
   const [product, setProduct] = useState([]);

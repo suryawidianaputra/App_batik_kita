@@ -6,7 +6,7 @@ let isCanOrder = false;
 const Get = async key => {
   try {
     const items = await AsyncStorage.getItem(key);
-    return items !== null ? items : null; // Mengembalikan null jika tidak ditemukan
+    return items !== null ? items : null;
   } catch (error) {
     console.log(`Error getting key ${key}:`, error);
     return null;
@@ -16,20 +16,20 @@ const Get = async key => {
 const Set = async (key, value) => {
   try {
     await AsyncStorage.setItem(key, value);
-    return true; // Mengembalikan true jika berhasil
+    return true;
   } catch (error) {
     console.log(`Error setting key ${key}:`, error);
-    return false; // Mengembalikan false jika ada error
+    return false;
   }
 };
 
 const Delete = async key => {
   try {
     await AsyncStorage.removeItem(key);
-    return true; // Mengembalikan true jika berhasil
+    return true;
   } catch (error) {
     console.log(`Error deleting key ${key}:`, error);
-    return false; // Mengembalikan false jika ada error
+    return false;
   }
 };
 
@@ -43,7 +43,7 @@ const Authentication = async () => {
   } else {
     isLogin = false;
   }
-  return isLogin; // Mengembalikan status otentikasi
+  return isLogin;
 };
 
 const canOrder = async () => {
@@ -56,13 +56,14 @@ const canOrder = async () => {
   } else {
     isCanOrder = false;
   }
-  return isCanOrder; // Mengembalikan status order
+  return isCanOrder;
 };
 
 async function debug() {
   console.log('Username:', await Get('userName'));
   console.log('Email:', await Get('email'));
   console.log('Login Status:', await Get('isLogin'));
+  console.log('account_id:', await Get('account_id'));
 }
 
 export {Get, Set, Delete, Authentication, isLogin, isCanOrder, debug};

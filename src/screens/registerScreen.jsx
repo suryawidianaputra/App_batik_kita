@@ -20,7 +20,7 @@ const RegisterScreen = ({navigation}) => {
   const [confirmPassword, setComfirmPassword] = useState('');
   const [showPassword, setShowPassword] = useState(true);
 
-  // Validasi dan Registrasi
+  // Validasi duan Registrasi
   async function handleRegister() {
     if (
       !(
@@ -55,7 +55,8 @@ const RegisterScreen = ({navigation}) => {
           await Set('isLogin', 'true');
           await Set('userName', userName);
           await Set('email', email);
-          await Authentication(); // Mengupdate status otentikasi
+          await Set('account_id', response.data.data.id);
+          await Authentication();
 
           if (isLogin) {
             return navigation.navigate('account');

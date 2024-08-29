@@ -12,7 +12,7 @@ const NavbarDetail = ({nav}) => {
         position: 'absolute',
         height: 40,
         width: '100%',
-        zIndex: 9999,
+        zIndex: 999,
       }}>
       <BackButton nav={nav} />
       <TouchableOpacity onPress={() => nav.navigate('cart')}>

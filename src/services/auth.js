@@ -42,4 +42,4 @@ const Authentication = async () => {
   }
 };
 
-export {Get, Set, Delete, Authentication, isLogin};
+// export {Get, Set, Delete, Authentication, isLogin};

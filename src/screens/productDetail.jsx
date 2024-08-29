@@ -15,11 +15,15 @@ import {styles} from '../styles/productDetail';
 import NavbarDetail from '../components/navbarDetail';
 import Comments from '../components/comments';
 import AddComment from '../components/addComment';
+import BuyOptions from '../components/buyOptions';
 
 const DetailScreens = ({navigation, route}) => {
   const {data} = route.params;
   const [comment, setComment] = useState([]);
   const [addComment, setAddComment] = useState('');
+  // const [showOptions, setShowOptions] = useState('');
+  const [cart, setCart] = useState(false);
+  const [status, setStatus] = useState(false);
 
   const getData = async () => {
     const data = await axios.get(`http://10.0.2.2:3550/api/comment/1?key=a`);
@@ -30,6 +34,10 @@ const DetailScreens = ({navigation, route}) => {
     const data = await axios.post(`http://10.0.2.2:3550/api/comment?key=a`, {});
   };
 
+  const actions = async e => {
+    const response = await axios.post(`http://10.0.2.2:3550/api`);
+  };
+
   useEffect(() => {
     getData();
   }, []);
@@ -37,6 +45,14 @@ const DetailScreens = ({navigation, route}) => {
   return (
     <>
       {/* action */}
+      <BuyOptions
+        nav={navigation}
+        status={status}
+        cart={cart}
+        setCart={setCart}
+        setStatus={setStatus}
+        data={data}
+      />
       <ScrollView>
         <NavbarDetail nav={navigation} />
         <View>
@@ -123,12 +139,22 @@ const DetailScreens = ({navigation, route}) => {
         </ScrollView>
       </ScrollView>
       <View style={styles.action}>
-        <View style={styles.keranjang}>
+        <TouchableOpacity
+          style={styles.keranjang}
+          onPress={() => {
+            setStatus(true);
+            setCart(true);
+          }}>
           <Text style={styles.keranjangText}>+ Keranjang</Text>
-        </View>
-        <View style={styles.beli}>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={styles.beli}
+          onPress={() => {
+            setStatus(true);
+            setCart(false);
+          }}>
           <Text style={styles.beliText}>Beli</Text>
-        </View>
+        </TouchableOpacity>
       </View>
     </>
   );

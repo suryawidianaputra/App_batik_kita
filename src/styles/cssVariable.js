@@ -6,5 +6,6 @@ export const cssVariable = {
     black: '#131842',
     white: '#F6F1E9',
     dark: '#000',
+    grey: '#EEEDEB',
   },
 };

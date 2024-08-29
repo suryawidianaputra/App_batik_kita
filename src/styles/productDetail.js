@@ -54,7 +54,7 @@ export const styles = StyleSheet.create({
     height: 50,
     // position: 'absolute',
     bottom: 0,
-    zIndex: 9999,
+    zIndex: 999,
   },
   keranjang: {
     height: 50,

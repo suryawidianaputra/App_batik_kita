@@ -37,7 +37,8 @@ const LoginScreen = ({navigation}) => {
           await Set('isLogin', 'true');
           await Set('userName', response.data.data.username);
           await Set('email', response.data.data.email);
-          await Authentication(); // Mengupdate status otentikasi
+          await Set('account_id', response.data.data.id);
+          await Authentication();
 
           if (isLogin) {
             return navigation.navigate('account');
