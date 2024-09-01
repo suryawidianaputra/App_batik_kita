@@ -8,43 +8,60 @@ import {
 } from 'react-native';
 import {useState, useEffect} from 'react';
 import {curency} from '../libs/currency';
+import {Get, Set} from '../libs/authentication';
 import axios from 'axios';
 
 // screens
 import {styles} from '../styles/productDetail';
 import NavbarDetail from '../components/navbarDetail';
 import Comments from '../components/comments';
-import AddComment from '../components/addComment';
 import BuyOptions from '../components/buyOptions';
 
 const DetailScreens = ({navigation, route}) => {
   const {data} = route.params;
+  const [datas, setDatas] = useState({});
   const [comment, setComment] = useState([]);
   const [addComment, setAddComment] = useState('');
-  // const [showOptions, setShowOptions] = useState('');
   const [cart, setCart] = useState(false);
   const [status, setStatus] = useState(false);
+  const [accountId, setAccountId] = useState(null);
 
-  const getData = async () => {
-    const data = await axios.get(`http://10.0.2.2:3550/api/comment/1?key=a`);
-    setComment(data.data.data);
+  const getProductById = async () => {
+    try {
+      const response = await axios.get(
+        `http://10.0.2.2:3550/api/product/${data.id}?key=a`,
+      );
+      setDatas(response.data.data);
+    } catch (error) {
+      console.error(error);
+    }
   };
 
-  const handleCreateComment = async () => {
-    const data = await axios.post(`http://10.0.2.2:3550/api/comment?key=a`, {});
-  };
-
-  const actions = async e => {
-    const response = await axios.post(`http://10.0.2.2:3550/api`);
+  const getCommentData = async () => {
+    try {
+      const response = await axios.get(
+        `http://10.0.2.2:3550/api/comment/1?key=a`,
+      );
+      setComment(response.data.data);
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   useEffect(() => {
-    getData();
+    const getAccId = async () => {
+      await Set('account_id', '1');
+      const id = await Get('account_id');
+      setAccountId(id);
+    };
+
+    getAccId();
+    getProductById();
+    getCommentData();
   }, []);
 
   return (
     <>
-      {/* action */}
       <BuyOptions
         nav={navigation}
         status={status}
@@ -52,21 +69,20 @@ const DetailScreens = ({navigation, route}) => {
         setCart={setCart}
         setStatus={setStatus}
         data={data}
+        id={accountId}
       />
       <ScrollView>
         <NavbarDetail nav={navigation} />
         <View>
           <View style={styles.containerImage}>
             <Image
-              source={{uri: `http://10.0.2.2:3550/${data.product_images}`}}
-              height={100}
-              width={100}
+              source={{uri: `http://10.0.2.2:3550/${datas.product_images}`}}
               style={styles.image}
             />
           </View>
           <View style={{marginLeft: 10, marginVertical: 5}}>
             <Text style={styles.productPrice}>
-              {curency(data.product_price)}
+              {curency(datas.product_price)}
             </Text>
             <View style={{flexDirection: 'row', gap: 5, alignItems: 'center'}}>
               <Image
@@ -74,19 +90,19 @@ const DetailScreens = ({navigation, route}) => {
                 style={{width: 15, height: 15}}
               />
               <Text style={styles.cicilan}>
-                {curency(Math.floor(data.product_price / 12))} x 12 Bulan dengan
-                Gopay
+                {curency(Math.floor(datas.product_price / 12))} x 12 Bulan
+                dengan Gopay
               </Text>
             </View>
           </View>
-          <View style={{borderWidth: 0.5}}></View>
+          <View style={{borderWidth: 0.5}} />
           <View style={{marginLeft: 10, marginTop: 5}}>
-            <Text style={styles.productName}>{data.product_name}</Text>
+            <Text style={styles.productName}>{datas.product_name}</Text>
             <Text style={styles.productDescription}>
-              Deskripsi: {data.product_description}
+              Deskripsi: {datas.product_description}
             </Text>
             <View style={{flexDirection: 'row', marginTop: 15, gap: 10}}>
-              <Text style={styles.soldOut}>Terjual: {data.soldout}</Text>
+              <Text style={styles.soldOut}>Terjual: {datas.soldout}</Text>
               <Image
                 source={require('../assets/icons/comment.png')}
                 style={{width: 20, aspectRatio: 1}}
@@ -100,12 +116,11 @@ const DetailScreens = ({navigation, route}) => {
         </View>
         <View style={{borderWidth: 0.5, marginTop: 10}} />
 
-        <ScrollView>
+        <View>
           <Text
             style={{fontSize: 20, color: '#000', marginLeft: 10, marginTop: 5}}>
             Komentar:
           </Text>
-          {/* add comment */}
           <View
             style={{
               flexDirection: 'row',
@@ -128,15 +143,12 @@ const DetailScreens = ({navigation, route}) => {
                   alignItems: 'center',
                   height: '100%',
                 }}>
-                <Text style={{color: '#fff', fontSize: 18}} c>
-                  Kirim
-                </Text>
+                <Text style={{color: '#fff', fontSize: 18}}>Kirim</Text>
               </View>
             </TouchableOpacity>
           </View>
-          {/* add comment */}
           <Comments data={comment} />
-        </ScrollView>
+        </View>
       </ScrollView>
       <View style={styles.action}>
         <TouchableOpacity

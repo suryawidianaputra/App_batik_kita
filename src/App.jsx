@@ -12,6 +12,8 @@ import ProfileScreen from './screens/profileScreen';
 import RegisterScreen from './screens/registerScreen';
 import EditProfile from './screens/editProfileScreen';
 import AddAddress from './screens/alamat';
+import OrderScreen from './screens/orderScreen';
+import DetailOrderScreen from './screens/detailOrderScreen';
 
 const App = () => {
   return (
@@ -22,6 +24,8 @@ const App = () => {
         <Stack.Screen name="home" component={HomeScreen} />
         <Stack.Screen name="detail" component={DetailScreens} />
         <Stack.Screen name="cart" component={CartScreen} />
+        <Stack.Screen name="order" component={OrderScreen} />
+        <Stack.Screen name="detailOrder" component={DetailOrderScreen} />
 
         {/* accounts */}
         <Stack.Screen name="account" component={ProfileScreen} />

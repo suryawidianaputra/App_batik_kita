@@ -1,45 +1,85 @@
-import {View, Text, ScrollView, Image} from 'react-native';
+import {View, Text, ScrollView, Image, TouchableOpacity} from 'react-native';
 import {useState, useEffect} from 'react';
 import BackButton from '../components/backButton';
 import axios from 'axios';
-import {Get} from '../libs/authentication';
+import {Get, Set} from '../libs/authentication';
 import {styles} from '../styles/cart';
+import {curency} from '../libs/currency';
 
 const CartScreen = ({navigation}) => {
   const [cartData, setCartData] = useState([]);
   const [accountId, setAccountId] = useState(null);
 
-  const getCartData = async () => {
-    const response = await axios.get(
-      `http://10.0.2.2:3550/api/cart/${accountId}?key=a`,
+  const getCartData = async id => {
+    if (accountId) {
+      const response = await axios.get(
+        `http://10.0.2.2:3550/api/cart/${accountId}?key=a`,
+      );
+      setCartData(response.data.data);
+    }
+  };
+
+  const deleteCart = async id => {
+    const response = await axios.delete(
+      `http://10.0.2.2:3550/api/cart/${id}?key=a`,
     );
-    setCartData(response.data.data);
+    getCartData();
   };
 
   useEffect(() => {
     const getData = async () => {
+      await Set('account_id', '1');
       setAccountId(await Get('account_id'));
     };
     getData();
+  }, []);
+
+  useEffect(() => {
     getCartData();
-    console.log(cartData);
   }, [accountId]);
 
   return (
-    <ScrollView style={styles.fContainer}>
-      <View style={{marginTop: 10, marginLeft: 5, position: 'absolute'}}>
+    <View style={styles.fContainer}>
+      <TouchableOpacity
+        onPress={() => navigation.goBack()}
+        style={styles.backButtonContainer}>
         <BackButton nav={navigation} />
-      </View>
+      </TouchableOpacity>
       <Text style={styles.title}>Cart</Text>
-      {cartData?.map((el, i) => (
-        <View key={i}>
-          <View>
-            <Image source={{uri: `http://10.0.2.2:3550/${el.product_image}`}} />
-            <Text>{el.product_name}</Text>
-          </View>
-        </View>
-      ))}
-    </ScrollView>
+      <ScrollView contentContainerStyle={styles.cartListContainer}>
+        {cartData?.map((el, i) => (
+          <TouchableOpacity
+            key={i}
+            style={styles.cart}
+            onPress={() =>
+              navigation.navigate('detail', {data: {id: el.product_id}})
+            }>
+            <View style={styles.cartItem}>
+              <Image
+                source={{
+                  uri: `http://10.0.2.2:3550/${el.product_image}?key=a`,
+                }}
+                style={styles.productImage}
+              />
+              <View style={styles.productDetails}>
+                <Text style={styles.productName}>{el.product_name}</Text>
+                <Text style={styles.productPrice}>
+                  {curency(el.product_price)}
+                </Text>
+              </View>
+            </View>
+            <View>
+              <TouchableOpacity onPress={() => deleteCart(el.id)}>
+                <Image
+                  source={require('../assets/icons/trash.png')}
+                  style={styles.trashImage}
+                />
+              </TouchableOpacity>
+            </View>
+          </TouchableOpacity>
+        ))}
+      </ScrollView>
+    </View>
   );
 };
 

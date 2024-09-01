@@ -17,7 +17,6 @@ const Navbar = ({nav}) => {
     <View style={styles.containerNavbar}>
       <TouchableOpacity
         onPress={() => {
-          console.log('Hh');
           nav.navigate('home');
         }}>
         <Image
@@ -32,7 +31,7 @@ const Navbar = ({nav}) => {
           source={require('../assets/icons/whiteCart.png')}
         />
       </TouchableOpacity>
-      <TouchableOpacity onPress={() => nav.navigate('process')}>
+      <TouchableOpacity onPress={() => nav.navigate('order')}>
         <Image
           style={styles.image}
           source={require('../assets/icons/assignment.png')}

@@ -6,7 +6,7 @@ import {curency} from '../libs/currency';
 import axios from 'axios';
 import {Get} from '../libs/authentication';
 
-const BuyOptions = ({nav, option, status, data, setStatus, cart, setCart}) => {
+const BuyOptions = ({nav, id, status, data, setStatus, cart, setCart}) => {
   const [quantity, setQuantity] = useState(1);
   const [price, setPrice] = useState(data.product_price);
   const [accountId, setAccountId] = useState(null);
@@ -16,12 +16,12 @@ const BuyOptions = ({nav, option, status, data, setStatus, cart, setCart}) => {
     const accountId = await Get('account_id');
 
     if (cart) {
+      setStatus(false);
       const upload = await axios.post(`http://10.0.2.2:3550/api/cart?key=a`, {
         product_id: data.id,
-        account_id: accountId,
+        account_id: parseInt(accountId),
         email: email,
       });
-      console.log(upload.data);
     }
   };
 
