@@ -60,10 +60,14 @@ const canOrder = async () => {
 };
 
 async function debug() {
-  console.log('Username:', await Get('userName'));
-  console.log('Email:', await Get('email'));
-  console.log('Login Status:', await Get('isLogin'));
-  console.log('account_id:', await Get('account_id'));
+  console.log({
+    username: await Get('userName'),
+    email: await Get('email'),
+    login: await Get('isLogin'),
+    account_id: await Get('account_id'),
+    address: await Get('account_id'),
+    phone: await Get('phone'),
+  });
 }
 
 export {Get, Set, Delete, Authentication, isLogin, isCanOrder, debug};

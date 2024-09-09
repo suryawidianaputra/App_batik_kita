@@ -1,4 +1,4 @@
-import {View, Text, TouchableOpacity, Image, TextInput} from 'react-native';
+import {View, Text, TouchableOpacity, Image} from 'react-native';
 import {useState, useEffect} from 'react';
 import {styles} from '../styles/buyOptions';
 import {cssVariable} from '../styles/cssVariable';
@@ -8,7 +8,7 @@ import {Get} from '../libs/authentication';
 
 const BuyOptions = ({nav, id, status, data, setStatus, cart, setCart}) => {
   const [quantity, setQuantity] = useState(1);
-  const [price, setPrice] = useState(data.product_price);
+  const [price, setPrice] = useState(null);
   const [accountId, setAccountId] = useState(null);
   const [email, setEmail] = useState(null);
 
@@ -17,21 +17,49 @@ const BuyOptions = ({nav, id, status, data, setStatus, cart, setCart}) => {
 
     if (cart) {
       setStatus(false);
-      const upload = await axios.post(`http://10.0.2.2:3550/api/cart?key=a`, {
+      await axios.post(`http://10.0.2.2:3550/api/cart?key=a`, {
         product_id: data.id,
         account_id: parseInt(accountId),
         email: email,
       });
     }
+    if (!cart) {
+      nav.navigate('payment', {
+        data: {
+          product_id: data.id,
+          account_id: id,
+          email: email,
+          status: 'menunggu',
+          quantity: parseInt(quantity),
+        },
+      });
+      // const upOrderData = await axios.post(
+      //   `http://10.0.2.2:3550/api/process?key=a`,
+      //   {
+      //     product_id: data.id,
+      //     account_id: id,
+      //     email: email,
+      //     status: 'menunggu',
+      //     quantity: parseInt(quantity),
+      //   },
+      // );
+      // console.log(upOrderData.data.data);
+    }
   };
 
   useEffect(() => {
-    const getAccountId = async () => {
-      setAccountId(await Get('account_id'));
-      setEmail(await Get('email'));
+    setPrice(data.product_price);
+  }, [data]);
+
+  useEffect(() => {
+    const getAccountData = async () => {
+      const accountId = await Get('account_id');
+      const email = await Get('email');
+      setAccountId(accountId);
+      setEmail(email);
     };
-    getAccountId();
-  });
+    getAccountData();
+  }, []);
 
   return (
     <View
@@ -55,14 +83,10 @@ const BuyOptions = ({nav, id, status, data, setStatus, cart, setCart}) => {
           />
         </TouchableOpacity>
       </View>
-      <View
-        style={{
-          flexDirection: 'row',
-          gap: 5,
-        }}>
+      <View style={{flexDirection: 'row', gap: 5}}>
         <TouchableOpacity
           style={styles.box}
-          onPress={() => setQuantity(quantity <= 1 ? 1 : quantity - 1)}>
+          onPress={() => setQuantity(quantity > 1 ? quantity - 1 : 1)}>
           <Text style={{fontSize: 30, color: 'black'}}>-</Text>
         </TouchableOpacity>
         <View style={styles.box}>

@@ -7,7 +7,7 @@ import {
   Alert,
 } from 'react-native';
 import {useState, useEffect} from 'react';
-import {Get} from '../libs/authentication';
+import {Get, Set} from '../libs/authentication';
 import {styles} from '../styles/address';
 import axios from 'axios';
 import BackButton from '../components/backButton';
@@ -16,14 +16,16 @@ const AddAddress = ({navigation}) => {
   const [userName, setUserName] = useState('User');
   const [image, setImage] = useState(null);
   const [email, setEmail] = useState(null);
-  const [telepon, setTelepon] = useState(null);
-  const [address, setAddress] = useState(null);
-  const [note, setNote] = useState(null);
+  const [telepon, setTelepon] = useState('');
+  const [address, setAddress] = useState('');
+  const [note, setNote] = useState('');
 
   const upAddress = async () => {
-    if (telepon === null && (address === null) & (note === null))
+    if (!telepon || !address || !note) {
       return Alert.alert('Error', 'Lengkapi data pada form', [{text: 'Ok'}]);
-    else {
+    }
+
+    try {
       const response = await axios.patch(
         `http://10.0.2.2:3550/api/users/address/${email}?key=a`,
         {
@@ -31,28 +33,42 @@ const AddAddress = ({navigation}) => {
           note: note,
           phoneNumber: telepon,
         },
-        await Set('address', address),
-        await Set('note', note),
-        await Set('phone', telepon),
       );
+      await Set('address', address);
+      await Set('note', note);
+      await Set('phone', telepon);
+      Alert.alert('Success', 'Data berhasil diperbarui', [{text: 'Ok'}]);
+    } catch (error) {
+      Alert.alert('Error', 'Gagal memperbarui data', [{text: 'Ok'}]);
+      console.error('Failed to update address:', error);
     }
   };
 
   useEffect(() => {
-    const getUername = async () => {
-      setUserName(await Get('userName'));
-      setEmail(await Get('email'));
+    const getUserData = async () => {
+      try {
+        const userEmail = await Get('email');
+        setUserName(await Get('userName'));
+        setEmail(userEmail);
 
-      const response = await axios.get(
-        `http://10.0.2.2:3550/api/users/profile/${email}?key=a`,
-      );
-      setImage(response.data.data.profilePitcure);
-      setTelepon(response.data.data.phoneNumber);
-      setAddress(response.data.data.address);
-      setNote(response.data.data.note);
+        if (userEmail) {
+          const response = await axios.get(
+            `http://10.0.2.2:3550/api/users/profile/${userEmail}?key=a`,
+          );
+          const userData = response.data.data;
+          setImage(userData.profilePitcure);
+          setTelepon(telepon);
+          setAddress(address);
+          setNote(note);
+        }
+      } catch (error) {
+        console.error('Failed to fetch user data:', error);
+      }
     };
-    getUername();
-  }, [email]);
+
+    getUserData();
+  }, []);
+
   return (
     <>
       <View
@@ -68,7 +84,7 @@ const AddAddress = ({navigation}) => {
         <View>
           <Image
             source={
-              image !== null
+              image
                 ? {uri: `http://10.0.2.2:3550/${image}`}
                 : require('../assets/icons/account.png')
             }
@@ -111,7 +127,7 @@ const AddAddress = ({navigation}) => {
             }}>
             <TouchableOpacity style={styles.button} onPress={upAddress}>
               <Text style={styles.buttonText}>
-                {note !== null ? 'Ubah data' : 'Daftar'}
+                {note ? 'Ubah data' : 'Daftar'}
               </Text>
             </TouchableOpacity>
           </View>

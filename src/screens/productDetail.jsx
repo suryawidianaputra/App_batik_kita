@@ -9,13 +9,15 @@ import {
 import {useState, useEffect} from 'react';
 import {curency} from '../libs/currency';
 import {Get, Set} from '../libs/authentication';
+import {styles} from '../styles/productDetail';
 import axios from 'axios';
 
 // screens
-import {styles} from '../styles/productDetail';
 import NavbarDetail from '../components/navbarDetail';
 import Comments from '../components/comments';
 import BuyOptions from '../components/buyOptions';
+
+const API_BASE_URL = 'http://10.0.2.2:3550';
 
 const DetailScreens = ({navigation, route}) => {
   const {data} = route.params;
@@ -29,7 +31,7 @@ const DetailScreens = ({navigation, route}) => {
   const getProductById = async () => {
     try {
       const response = await axios.get(
-        `http://10.0.2.2:3550/api/product/${data.id}?key=a`,
+        `${API_BASE_URL}/api/product/${data.id}?key=a`,
       );
       setDatas(response.data.data);
     } catch (error) {
@@ -39,12 +41,24 @@ const DetailScreens = ({navigation, route}) => {
 
   const getCommentData = async () => {
     try {
-      const response = await axios.get(
-        `http://10.0.2.2:3550/api/comment/1?key=a`,
-      );
+      const response = await axios.get(`${API_BASE_URL}/api/comment/1?key=a`);
       setComment(response.data.data);
     } catch (error) {
       console.error(error);
+    }
+  };
+
+  const handleSendComment = async () => {
+    try {
+      const response = await axios.post(`${API_BASE_URL}/api/comment?key=a`, {
+        product_id: data.id,
+        account_id: accountId,
+        comment: addComment,
+      });
+      setAddComment('');
+      getCommentData();
+    } catch (error) {
+      console.error('Failed to send comment:', error);
     }
   };
 
@@ -68,7 +82,7 @@ const DetailScreens = ({navigation, route}) => {
         cart={cart}
         setCart={setCart}
         setStatus={setStatus}
-        data={data}
+        data={datas}
         id={accountId}
       />
       <ScrollView>
@@ -76,7 +90,7 @@ const DetailScreens = ({navigation, route}) => {
         <View>
           <View style={styles.containerImage}>
             <Image
-              source={{uri: `http://10.0.2.2:3550/${datas.product_images}`}}
+              source={{uri: `${API_BASE_URL}/${datas.product_images}`}}
               style={styles.image}
             />
           </View>
@@ -135,7 +149,9 @@ const DetailScreens = ({navigation, route}) => {
               onChangeText={setAddComment}
               value={addComment}
             />
-            <TouchableOpacity style={styles.inputButton}>
+            <TouchableOpacity
+              style={styles.inputButton}
+              onPress={handleSendComment}>
               <View
                 style={{
                   flexDirection: 'row',
